@@ -33,30 +33,38 @@ const operation = function (number1, number2, operator) {
 }
 
 // desired functionality
-// numbers buttons from 0 to 9
-// operator buttons + - x /
-// equation button = which triggers operation function
-// clear button
+// ✓ numbers buttons from 0 to 9
+// ✓ operator buttons + - x /
+// ✓ equation button = which triggers operation function
+// ✓ clear button
 // backspace button
 // decimal button (once clicked, can't click again)
-// populate the display when you click the digit buttons
+// ✓ populate the display when you click the digit buttons
+
+// ✓ clicking any operator (+ - x /) would store whatever you've entered as number1, display 1st number and the operator, then ready to read the next number 
+// if instead you clicked another operator after already clicking an operator, the mostly recently selected operator take precedence
+// ✓ click equal button would store whatever you've entered after clicking operator button as number2, then perform the calculation
+
 
 let number1 = "";
 let number2 = "";
 let operator = "";
-
-// clicking any operator (+ - x /) would store whatever you've entered as number1, display 1st number and the operator, then ready to read the next number 
-// if instead you clicked another operator after already clicking an operator, the mostly recently selected operator take precedence
-// click equal button would store whatever you've entered after clicking operator button as number2, then perform the calculation
-
 let slctNumBtns = {};
 let slctOptBtns = {};
 let clckNumBtnsFnc = {};
-let clckOptBtnsFnc = {};
 const optArray = ["Add", "Sbtrct", "Mltp", "Dvsn"];
 frmlDsply = document.querySelector("#formula");
 ansDsply = document.querySelector("#answer");
 btnClr = document.querySelector("#btnClr");
+
+const clrFncBrfOpr = function() {
+    number1 = "";
+    number2 = "";
+    operator = "";
+    frmlDsply.textContent = "";
+    ansDsply.textContent = "";
+}
+btnClr.addEventListener("click", clrFncBrfOpr);
 
 for (let i = 0; i < 10; i++) {
 
@@ -65,7 +73,6 @@ for (let i = 0; i < 10; i++) {
     clckNumBtnsFnc[`read${i}`] = function () {
         if (operator === "") {
             number1 = number1 + `${i}`;
-            console.log(number1);
             frmlDsply.textContent = number1;
         }
     }
@@ -73,19 +80,21 @@ for (let i = 0; i < 10; i++) {
     slctNumBtns[`btnNum${i}`].addEventListener("click", clckNumBtnsFnc[`read${i}`]);
 }
 
-
-
-for (let i = 0; i < optArray.length; i++) {
-    slctOptBtns[`btn` + optArray[i]] = document.querySelector(`#btn` + optArray[i]);
-    // clckOptBtnsFnc[`opt` + optArray[i]] = function () {
-
-    // }
-
-}
-
-const clkAdd = function() {
-    operator = "add";
-    frmlDsply.textContent = frmlDsply.textContent + " + ";
+const clkOprtn = function(event) {
+    
+    if (event.target.id === "btnAdd") {
+        operator = "add";
+        frmlDsply.textContent = frmlDsply.textContent + " + ";
+    } else if (event.target.id === "btnSbtrct") {
+        operator = "subtract";
+        frmlDsply.textContent = frmlDsply.textContent + " - ";
+    } else if (event.target.id === "btnMltp") {
+        operator = "multiply";
+        frmlDsply.textContent = frmlDsply.textContent + " x ";
+    } else if (event.target.id === "btnDvsn") {
+        operator = "division";
+        frmlDsply.textContent = frmlDsply.textContent + " ÷ ";
+    }
 
     let slct2ndNumBtns = {};
     let clck2ndNumBtnsFnc = {};
@@ -93,43 +102,99 @@ const clkAdd = function() {
     for (let i = 0; i < 10; i++) {
 
         slct2ndNumBtns[`btnNum${i}`] = document.querySelector(`#btnNum${i}`);
-    
+
         clck2ndNumBtnsFnc[`read${i}`] = function () {
             if (operator !== "") {
                 number2 = number2 + `${i}`;
-                console.log(number2);
-                console.log(clck2ndNumBtnsFnc[`read${i}`]);
-                frmlDsply.textContent = number1 + " + " + number2;
+                if (operator === "add") {
+                    frmlDsply.textContent = number1 + " + " + number2;
+                } else if (operator === "subtract") {
+                    frmlDsply.textContent = number1 + " - " + number2;
+                } else if (operator === "multiply") {
+                    frmlDsply.textContent = number1 + " x " + number2;
+                } else if (operator === "division") {
+                    frmlDsply.textContent = number1 + " ÷ " + number2;
+                }
             }
         }
-    
+
         slct2ndNumBtns[`btnNum${i}`].addEventListener("click", clck2ndNumBtnsFnc[`read${i}`]);
     }
 
     const btnEql = document.querySelector("#btnEql");
-    eqlFnc = function() {
+    eqlFnc = function () {
         ansDsply.textContent = operation(Number(number1), Number(number2), operator);
     }
     btnEql.addEventListener("click", eqlFnc);
 
+    clrFnc = function () {
+        number1 = "";
+        number2 = "";
+        operator = "";
+        frmlDsply.textContent = "";
+        ansDsply.textContent = "";
+
+        for (let i = 0; i < 10; i++) {
+            slct2ndNumBtns[`btnNum${i}`].removeEventListener("click", clck2ndNumBtnsFnc[`read${i}`]);
+        }
+
+    }
+
+    btnClr.addEventListener("click", clrFnc);
+
 }
 
-slctOptBtns[`btnAdd`].addEventListener("click", clkAdd);
-
-
-const clrFnc = function() {
-    number1 = "";
-    number2 = "";
-    operator = "";
-    frmlDsply.textContent = "";
-    ansDsply.textContent = "";
+for (let i = 0; i < optArray.length; i++) {
+    slctOptBtns[`btn` + optArray[i]] = document.querySelector(`#btn` + optArray[i]);
+    slctOptBtns[`btn` + optArray[i]].addEventListener("click", clkOprtn);
 }
 
-btnClr.addEventListener("click", clrFnc);
 
 
+// const clkAdd = function () {
+//     operator = "add";
+//     frmlDsply.textContent = frmlDsply.textContent + " + ";
 
+//     let slct2ndNumBtns = {};
+//     let clck2ndNumBtnsFnc = {};
 
+//     for (let i = 0; i < 10; i++) {
 
+//         slct2ndNumBtns[`btnNum${i}`] = document.querySelector(`#btnNum${i}`);
 
-// console.log(operation(number1, number2, "division"));
+//         clck2ndNumBtnsFnc[`read${i}`] = function () {
+//             if (operator !== "") {
+//                 number2 = number2 + `${i}`;
+//                 console.log(number2);
+//                 console.log(clck2ndNumBtnsFnc[`read${i}`]);
+//                 frmlDsply.textContent = number1 + " + " + number2;
+//             }
+//         }
+
+//         slct2ndNumBtns[`btnNum${i}`].addEventListener("click", clck2ndNumBtnsFnc[`read${i}`]);
+//     }
+
+//     const btnEql = document.querySelector("#btnEql");
+//     eqlFnc = function () {
+//         ansDsply.textContent = operation(Number(number1), Number(number2), operator);
+//     }
+//     btnEql.addEventListener("click", eqlFnc);
+
+//     clrFnc = function () {
+//         number1 = "";
+//         number2 = "";
+//         operator = "";
+//         frmlDsply.textContent = "";
+//         ansDsply.textContent = "";
+
+//         for (let i = 0; i < 10; i++) {
+//             slct2ndNumBtns[`btnNum${i}`].removeEventListener("click", clck2ndNumBtnsFnc[`read${i}`]);
+//         }
+
+//     }
+
+//     btnClr.addEventListener("click", clrFnc);
+
+// }
+
+// slctOptBtns[`btnAdd`].addEventListener("click", clkAdd);
