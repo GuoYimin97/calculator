@@ -42,7 +42,7 @@ const operation = function (number1, number2, operator) {
 // ✓ click equal button would store whatever you've entered after clicking operator button as number2, then perform the calculation
 
 // ✓ if instead you clicked another operator after already clicking an operator, the mostly recently selected operator take precedence
-// 3 + 6 + 8 (clicking the second + will trigger the operation of 3 + 6)
+// ✓ 3 + 6 + 8 (clicking the second + will trigger the operation of 3 + 6)
 // backspace button
 // decimal button (once clicked, can't click again)
 
@@ -88,7 +88,7 @@ for (let i = 0; i < 10; i++) {
 
 const clkOprtn = function (event) {
 
-    if (firstOprClk) {
+    if (firstOprClk && number2 === "") {
         firstOprClk = false;
 
         if (event.target.id === "btnAdd") {
@@ -148,7 +148,7 @@ const clkOprtn = function (event) {
         }
         btnClr.addEventListener("click", clrFnc);
 
-    } else {
+    } else if (!firstOprClk && number2 === "") {
         if (event.target.id === "btnAdd") {
             operator = "add";
             frmlDsply.textContent = number1 + " + ";
@@ -163,6 +163,26 @@ const clkOprtn = function (event) {
             frmlDsply.textContent = number1 + " ÷ ";
         }
 
+    } else if (!firstOprClk && number2 !== "") {
+        
+            ansDsply.textContent = operation(Number(number1), Number(number2), operator);
+            number1 = ansDsply.textContent;
+            number2 = "";
+            
+            if (event.target.id === "btnAdd") {
+                operator = "add";
+                frmlDsply.textContent = number1 + " + ";
+            } else if (event.target.id === "btnSbtrct") {
+                operator = "subtract";
+                frmlDsply.textContent = number1 + " - ";
+            } else if (event.target.id === "btnMltp") {
+                operator = "multiply";
+                frmlDsply.textContent = number1 + " x ";
+            } else if (event.target.id === "btnDvsn") {
+                operator = "division";
+                frmlDsply.textContent = number1 + " ÷ ";
+            }
+    
     }
     
 
